@@ -4,6 +4,7 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 
 app = Flask(__name__)
+port = int(os.getenv("PORT"))
 
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sales.db'
 if 'VCAP_SERVICES' in os.environ:
@@ -122,4 +123,4 @@ def new_order():
     return jsonify({'order': 'created'}), 201
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, host='0.0.0.0', port=port)

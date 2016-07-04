@@ -5,6 +5,5 @@ applications:
   memory: 256M
   instances: 1
   host: tporderdev
-  command: python app.py
   services:
     - order_app-db
