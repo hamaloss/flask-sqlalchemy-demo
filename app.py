@@ -1,6 +1,8 @@
 #!flask/bin/python
 from flask import Flask, jsonify, abort, make_response, request
 from flask_sqlalchemy import SQLAlchemy
+from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
 import os
 
 app = Flask(__name__)
@@ -19,17 +21,20 @@ else:
 
 print(app.config['SQLALCHEMY_DATABASE_URI'])
 db = SQLAlchemy(app)
+migrate = Migrate(app, db)
+manager = Manager(app)
+manager.add_command('db', MigrateCommand)
 
 class User(db.Model):
 
     __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String, nullable=False, unique=True)
-    name = db.Column(db.String, nullable=False)
-    address = db.Column(db.String, nullable=False)
-    postalCode = db.Column(db.String, nullable=False)
-    city = db.Column(db.String, nullable=False)
+    username = db.Column(db.String(30), nullable=False, unique=True)
+    name = db.Column(db.String(30), nullable=False)
+    address = db.Column(db.String(50), nullable=False)
+    postalCode = db.Column(db.String(15), nullable=False)
+    city = db.Column(db.String(30), nullable=False)
     order = db.relationship("Order", backref="customer", lazy="dynamic")
 
 class Item(db.Model):
@@ -38,7 +43,7 @@ class Item(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     productId = db.Column(db.Integer, nullable=False, unique=True)
-    productName = db.Column(db.String, nullable=False)
+    productName = db.Column(db.String(100), nullable=False)
     productPrice = db.Column(db.Float, nullable=False)
     productRow = db.relationship("Orderrow", backref="itemonrow", lazy="dynamic")
 
@@ -48,7 +53,7 @@ class Order(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    status = db.Column(db.String, nullable=False, default="Received")
+    status = db.Column(db.String(20), nullable=False, default="Received")
     orderrow = db.relationship("Orderrow", backref="parentorder", lazy="dynamic")
 
 class Orderrow(db.Model):
@@ -123,4 +128,5 @@ def new_order():
     return jsonify({'order': 'created'}), 201
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=port)
+  manager.add_command('runserver', app.run(host='0.0.0.0', port=port, debug=True))
+  manager.run()
