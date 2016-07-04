@@ -1,12 +1,10 @@
 #!flask/bin/python
 from flask import Flask, jsonify, abort, make_response, request
 from flask_sqlalchemy import SQLAlchemy
-from flask_script import Manager
-from flask_migrate import Migrate, MigrateCommand
 import os
 
 app = Flask(__name__)
-port = int(os.getenv("PORT"))
+port = int(os.getenv("PORT", "5000"))
 
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sales.db'
 if 'VCAP_SERVICES' in os.environ:
@@ -21,9 +19,6 @@ else:
 
 print(app.config['SQLALCHEMY_DATABASE_URI'])
 db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-manager = Manager(app)
-manager.add_command('db', MigrateCommand)
 
 class User(db.Model):
 
@@ -127,6 +122,3 @@ def new_order():
 
     return jsonify({'order': 'created'}), 201
 
-if __name__ == '__main__':
-  manager.add_command('runserver', app.run(host='0.0.0.0', port=port, debug=True))
-  manager.run()
