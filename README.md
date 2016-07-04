@@ -1,5 +1,6 @@
 # flask-sqlalchemy-demo
+
+Installation:
+
 $ virtualenv flask
-$ flask/bin/pip install flask
-$ flask/bin/pip install flask-sqlalchemy
-$ mkdir db
+$ flask/bin/pip install -r requirements.txt
