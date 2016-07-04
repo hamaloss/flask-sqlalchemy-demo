@@ -37,7 +37,7 @@ class Item(db.Model):
     __tablename__ = "items"
 
     id = db.Column(db.Integer, primary_key=True)
-    productId = db.Column(db.Integer, nullable=False, unique=True)
+    productId = db.Column(db.String(100), nullable=False, unique=True)
     productName = db.Column(db.String(100), nullable=False)
     productPrice = db.Column(db.Float, nullable=False)
     productRow = db.relationship("Orderrow", backref="itemonrow", lazy="dynamic")
