@@ -1,11 +1,22 @@
 #!flask/bin/python
 from flask import Flask, jsonify, abort, make_response, request
 from flask_sqlalchemy import SQLAlchemy
+import os
 
 app = Flask(__name__)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sales.db'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sales.db'
+if 'VCAP_SERVICES' in os.environ:
+  import json
+  vcap_services = json.loads(os.environ['VCAP_SERVICES'])
+  mysql_srv = vcap_services['cleardb'][0]
+  cred = mysql_srv['credentials']
+  mysql_uri = "mysql+pymysql://"+cred['username']+":"+cred['password']+"@"+cred['hostname']+":"+cred['port']+"/"+cred['name']
+  app.config['SQLALCHEMY_DATABASE_URI'] = mysql_uri
+else:
+  app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sales.db'
 
+print(app.config['SQLALCHEMY_DATABASE_URI'])
 db = SQLAlchemy(app)
 
 class User(db.Model):

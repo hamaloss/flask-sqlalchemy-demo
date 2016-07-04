@@ -1,0 +1,10 @@
+---
+applications:
+- name: order_app
+  buildpack: python_buildpack
+  memory: 256M
+  instances: 1
+  host: tporderdev
+  command: python app.py
+  services:
+    - order_app-db
