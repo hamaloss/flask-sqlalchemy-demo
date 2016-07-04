@@ -4,7 +4,6 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 
 app = Flask(__name__)
-port = int(os.getenv("PORT", "5000"))
 
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sales.db'
 if 'VCAP_SERVICES' in os.environ:
