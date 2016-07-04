@@ -69,10 +69,10 @@ def not_found(error):
 @app.route('/report/api/v1.0/orderlist', methods=['GET'])
 def get_allOrders():
     orderList = []
-    orders = Orderrow.query.all()
+    orders = Order.query.all()
     for order in orders:
-        thisorderrow = {"rowId":order.id, "user":order.parentorder.customer.name, "item":order.itemonrow.productName, "itemcount":order.count, "belongsToOrder":order.parentorder.id}
-        orderList.append(thisorderrow)
+        thisorder = {"Id":order.id, "Orderer":order.customer.username, "Items":[{"Name":row.itemonrow.productName, "Amount":row.count} for row in order.orderrow]}
+        orderList.append(thisorder)
     return jsonify(orderList)
 
 @app.route('/report/api/v1.0/ordercount', methods=['GET'])
@@ -87,7 +87,7 @@ def get_order(order_id):
     orderList = []
     orders = Order.query.filter_by(id = order_id).all()
     for order in orders:
-        orderList.append({"order id":order.id, "Customer":order.customer.name })
+        orderList.append({"Orderer":order.customer.username, "Items":[{"Name":row.itemonrow.productName, "Amount":row.count} for row in order.orderrow]})
     
     if len(orderList) == 0:
         abort(404)
