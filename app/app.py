@@ -17,6 +17,8 @@ else:
   app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sales.db'
 
 print(app.config['SQLALCHEMY_DATABASE_URI'])
+app.config['SQLALCHEMY_POOL_RECYCLE'] = 59
+app.config['SQLALCHEMY_POOL_TIMEOUT'] = 20
 db = SQLAlchemy(app)
 
 class User(db.Model):

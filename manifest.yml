@@ -4,7 +4,6 @@ applications:
   buildpack: python_buildpack
   memory: 256M
   instances: 1
-  host: tporderdev
   command: python run.py
   services:
     - order_app-db
