@@ -85,28 +85,27 @@ def get_orderCount():
 
 @app.route('/report/api/v1.0/order/<int:order_id>', methods=['GET'])
 def get_order(order_id):
-    orderList = []
+    result = None
     orders = Order.query.filter_by(id = order_id).all()
-    for order in orders:
-        orderList.append({"Orderer":order.customer.username, "status":order.status, "Items":[{"Name":row.itemonrow.productName, "Amount":row.count} for row in order.orderrow]})
-    
-    if len(orderList) == 0:
+    order = orders[0]
+    result = {"userName":order.customer.username, "orderStatus":order.status, "items":[{"name":row.itemonrow.productName, "amount":row.count} for row in order.orderrow]}
+
+    if len(result) == 0:
         abort(404)
-    
-    return jsonify(orderList)
+
+    return jsonify(result)
 
 @app.route('/report/api/v1.0/myorders/<string:useremail>', methods=['GET'])
 def get_userorder(useremail):
-    userorderList = []
+    result = None
     userorders = User.query.filter_by(username = useremail).all()
     for userorder in userorders:
-        thisorder = {"Email":userorder.username, "Orders":[{"orderid":order.id, "orderStatus":order.status, "items":[{"name":row.itemonrow.productName, "unitPrice":row.itemonrow.productPrice, "amount":row.count} for row in order.orderrow]} for order in userorder.order]}
-        userorderList.append(thisorder)
+        thisorder = {"email":userorder.username, "orders":[{"orderid":order.id, "orderStatus":order.status, "items":[{"name":row.itemonrow.productName, "unitPrice":row.itemonrow.productPrice, "amount":row.count} for row in order.orderrow]} for order in userorder.order]}
+        result = thisorder
 
-    if len(userorderList) == 0:
+    if len(result) == 0:
         abort(404)
-
-    return jsonify(userorderList)
+    return jsonify(result)
 
 @app.route('/report/api/v1.0/neworder', methods=['POST'])
 def new_order():
